@@ -82,20 +82,6 @@ export default function HomePage() {
         }
     }
 
-    const handleDocumentSave = async (documentData) => {
-        try {
-            await api.post('/api/document', {
-                body: JSON.stringify(documentData),
-            })
-
-            // Refresh documents after save
-            fetchDocuments()
-            setIsDocumentModalOpen(false)
-        } catch (error) {
-            console.error("Error saving document:", error)
-            alert("error lors de l'ajout")
-        }
-    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
@@ -300,8 +286,7 @@ export default function HomePage() {
             <DocumentModal
                 isOpen={isDocumentModalOpen}
                 onClose={() => setIsDocumentModalOpen(false)}
-                onSave={handleDocumentSave}
-                document={editingDocument}
+                doc={editingDocument}
                 documentTypes={documentTypes}
             />
 

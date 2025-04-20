@@ -1,69 +1,11 @@
-import {useEffect, useState} from "react"
+import {useState} from "react"
+import {api} from "../Services/api.js";
 
-export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}) {
-    const [formData, setFormData] = useState({
-        doc_id: "",
-        doc_name: "",
-        doc_type: "",
-        doc_content: "",
-        doc_format: "pdf",
-        doc_file_full_path: "",
-        doc_insert_date: "",
-        doc_updated_date: "",
-    })
+export function DocumentModal({isOpen, onClose, documentTypes}) {
     const [file, setFile] = useState(null)
     const [errors, setErrors] = useState({})
     const [isDragging, setIsDragging] = useState(false)
-
-    useEffect(() => {
-        if (document) {
-            setFormData({
-                ...document,
-            })
-        } else {
-            setFormData({
-                doc_id: "",
-                doc_name: "",
-                doc_type: "",
-                doc_content: "",
-                doc_format: "pdf",
-                doc_file_full_path: "",
-
-            })
-        }
-        setFile(null)
-        setErrors({})
-    }, [document, isOpen])
-
-    const handleChange = (e) => {
-        const {name, value} = e.target
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }))
-    }
-
-    const handleSelectChange = (name, value) => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }))
-    }
-
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0]
-        if (selectedFile) {
-            setFile(selectedFile)
-
-            const format = selectedFile.name.split(".").pop().toLowerCase()
-            if (format === "pdf" || format === "docx" || format === "doc") {
-                setFormData((prev) => ({
-                    ...prev,
-                    doc_format: format === "doc" || format === "docx" ? "word" : "pdf",
-                }))
-            }
-        }
-    }
+    
 
     const handleDragOver = (e) => {
         e.preventDefault()
@@ -93,43 +35,18 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
         }
     }
 
-    const validateForm = () => {
-        const newErrors = {}
-
-        if (!formData.doc_name.trim()) newErrors.doc_name = "Le nom du document est requis"
-        if (!formData.doc_type) newErrors.doc_type = "Le type de document est requis"
-        if (!formData.doc_content.trim()) newErrors.doc_content = "Le contenu du document est requis"
-        if (!document && !file) newErrors.file = "Le fichier est requis"
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        try {
+            await api.post('/api/document', {})
 
-        if (!validateForm()) return
-
-        // In a real application, you would upload the file here
-        // and get the file path from the server response
-
-        // For now, we'll just simulate it
-        const documentData = {
-            ...formData,
-            doc_updated_date: new Date().toISOString(),
+            // Refresh documents after save
+            // fetchDocuments()
+            // setIsDocumentModalOpen(false)
+        } catch (error) {
+            console.error("Error saving document:", error)
+            alert("error lors de l'ajout")
         }
-
-        if (!document) {
-            // For new documents, set insert date
-            documentData.doc_insert_date = new Date().toISOString()
-        }
-
-        // If we have a file, we would normally upload it and get the path
-        if (file) {
-            documentData.doc_file_full_path = `/uploads/${file.name}`
-        }
-
-        onSave(documentData)
     }
 
     if (!isOpen) return null
@@ -146,7 +63,7 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                     className="w-full max-w-[600px] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all animate-slide-up">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-xl font-semibold text-purple-900">
-                            {document ? "Modifier le document" : "Ajouter un nouveau document"}
+                            Ajouter un nouveau document
                         </h3>
                         <button
                             type="button"
@@ -178,8 +95,6 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                 <input
                                     id="doc_name"
                                     name="doc_name"
-                                    value={formData.doc_name}
-                                    onChange={handleChange}
                                     className={`w-full h-11 px-3 rounded-xl border ${
                                         errors.doc_name ? "border-pink-500" : "border-purple-100"
                                     } focus:outline-none focus:ring-2 focus:ring-purple-500/50 shadow-sm`}
@@ -194,8 +109,8 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                 </label>
                                 <select
                                     id="doc_type"
-                                    value={formData.doc_type}
-                                    onChange={(e) => handleSelectChange("doc_type", e.target.value)}
+                                    // value={formData.doc_type}
+                                    // onChange={(e) => handleSelectChange("doc_type", e.target.value)}
                                     className={`w-full h-11 px-3 rounded-xl border ${
                                         errors.doc_type ? "border-pink-500" : "border-purple-100"
                                     } focus:outline-none focus:ring-2 focus:ring-purple-500/50 shadow-sm`}
@@ -217,8 +132,8 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                 <textarea
                                     id="doc_content"
                                     name="doc_content"
-                                    value={formData.doc_content}
-                                    onChange={handleChange}
+                                    // value={formData.doc_content}
+                                    // onChange={handleChange}
                                     rows={5}
                                     className={`w-full px-3 py-2 rounded-xl border ${
                                         errors.doc_content ? "border-pink-500" : "border-purple-100"
@@ -238,8 +153,8 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                             type="radio"
                                             name="doc_format"
                                             value="pdf"
-                                            checked={formData.doc_format === "pdf"}
-                                            onChange={() => handleSelectChange("doc_format", "pdf")}
+                                            // checked={formData.doc_format === "pdf"}
+                                            // onChange={() => handleSelectChange("doc_format", "pdf")}
                                             className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300"
                                         />
                                         <label htmlFor="pdf" className="ml-2 block text-sm text-gray-700">
@@ -252,8 +167,8 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                             type="radio"
                                             name="doc_format"
                                             value="word"
-                                            checked={formData.doc_format === "word"}
-                                            onChange={() => handleSelectChange("doc_format", "word")}
+                                            // checked={formData.doc_format === "word"}
+                                            // onChange={() => handleSelectChange("doc_format", "word")}
                                             className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300"
                                         />
                                         <label htmlFor="word" className="ml-2 block text-sm text-gray-700">
@@ -282,7 +197,7 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                         id="file"
                                         type="file"
                                         accept=".pdf,.doc,.docx"
-                                        onChange={handleFileChange}
+                                        // onChange={handleFileChange}
                                         className="hidden"
                                     />
                                     <svg
@@ -332,46 +247,6 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                 {errors.file && <p className="text-pink-500 text-xs mt-1">{errors.file}</p>}
                             </div>
 
-                            {document && (
-                                <div className="flex items-center gap-4 text-xs text-purple-500 mt-2">
-                                    <div className="flex items-center">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-3.5 w-3.5 mr-1"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        >
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8" y1="2" x2="8" y2="6"/>
-                                            <line x1="3" y1="10" x2="21" y2="10"/>
-                                        </svg>
-                                        <span>Créé le: {new Date(document.doc_insert_date).toLocaleDateString()}</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-3.5 w-3.5 mr-1"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        >
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8" y1="2" x2="8" y2="6"/>
-                                            <line x1="3" y1="10" x2="21" y2="10"/>
-                                        </svg>
-                                        <span>Modifié le: {new Date(document.doc_updated_date).toLocaleDateString()}</span>
-                                    </div>
-                                </div>
-                            )}
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-purple-100">
@@ -386,7 +261,7 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                                 type="submit"
                                 className="px-4 py-2.5 text-sm font-medium text-white bg-purple-600 rounded-xl hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-200 shadow-md shadow-purple-200/50 hover:shadow-lg hover:shadow-purple-300/50 active:scale-95"
                             >
-                                {document ? "Mettre à jour" : "Ajouter"}
+                                Ajouter
                             </button>
                         </div>
                     </form>
