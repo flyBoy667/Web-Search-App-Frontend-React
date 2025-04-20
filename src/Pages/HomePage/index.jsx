@@ -2,6 +2,7 @@ import {useEffect, useState} from "react"
 import TypeModal from "../../Components/TypeModal.jsx";
 import {DocumentModal} from "../../Components/DocumentModal.jsx";
 import {DocumentTable} from "../../Components/DocumentTable.jsx";
+import {api} from "../../Services/api.js";
 
 export default function HomePage() {
     const [searchText, setSearchText] = useState("")
@@ -24,9 +25,8 @@ export default function HomePage() {
 
     const fetchDocumentTypes = async () => {
         try {
-            // Replace with your actual API endpoint
-            const response = await fetch("/api/document-types")
-            const data = await response.json()
+            const response = await api.get("/api/document-type")
+            const data = await response.data
             setDocumentTypes(data)
         } catch (error) {
             console.error("Error fetching document types:", error)
@@ -35,9 +35,8 @@ export default function HomePage() {
 
     const fetchDocuments = async () => {
         try {
-            // Replace with your actual API endpoint
-            const response = await fetch("/api/documents")
-            const data = await response.json()
+            const response = await api.get("/api/document")
+            const data = await response.data
             setDocuments(data)
             setSearchResults(data)
         } catch (error) {
@@ -48,7 +47,6 @@ export default function HomePage() {
     const handleSearch = async () => {
         setLoading(true)
         try {
-            // Replace with your actual search API endpoint
             const queryParams = new URLSearchParams()
             if (searchText) queryParams.append("query", searchText)
             if (selectedType) queryParams.append("type", selectedType)
@@ -76,11 +74,7 @@ export default function HomePage() {
     const handleDeleteDocument = async (docId) => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
             try {
-                // Replace with your actual delete API endpoint
-                await fetch(`/api/documents/${docId}`, {
-                    method: "DELETE",
-                })
-                // Refresh documents after deletion
+                await api.delete(`/api/document/${docId}`)
                 fetchDocuments()
             } catch (error) {
                 console.error("Error deleting document:", error)
@@ -90,7 +84,6 @@ export default function HomePage() {
 
     const handleDocumentSave = async (documentData) => {
         try {
-            // Replace with your actual save/update API endpoint
             const method = documentData.doc_id ? "PUT" : "POST"
             const url = documentData.doc_id ? `/api/documents/${documentData.doc_id}` : "/api/documents"
 
