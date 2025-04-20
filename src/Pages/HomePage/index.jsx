@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react"
-import TypeModal from "../Components/TypeModal.jsx";
-import {DocumentModal} from "../Components/DocumentModal.jsx";
-import {DocumentTable} from "../Components/DocumentTable.jsx";
+import TypeModal from "../../Components/TypeModal.jsx";
+import {DocumentModal} from "../../Components/DocumentModal.jsx";
+import {DocumentTable} from "../../Components/DocumentTable.jsx";
 
-export default function Home() {
+export default function HomePage() {
     const [searchText, setSearchText] = useState("")
     const [selectedType, setSelectedType] = useState("")
     const [documentTypes, setDocumentTypes] = useState([])
