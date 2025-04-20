@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react"
+import {api} from "../Services/api.js";
 
-export default function TypeModal({isOpen, onClose, onSave, documentTypes}) {
+export default function TypeModal({isOpen, onClose, documentTypes}) {
     const [types, setTypes] = useState([])
     const [newType, setNewType] = useState("")
     const [error, setError] = useState("")
@@ -10,31 +11,36 @@ export default function TypeModal({isOpen, onClose, onSave, documentTypes}) {
             setTypes([...documentTypes])
         }
     }, [documentTypes, isOpen])
-
-    const handleAddType = () => {
-        if (!newType.trim()) {
-            setError("Le nom du type est requis")
-            return
-        }
-
-        // Check if type already exists
-        if (types.some((type) => type.name.toLowerCase() === newType.toLowerCase())) {
-            setError("Ce type existe déjà")
-            return
-        }
-
-        setTypes([...types, {id: `temp-${Date.now()}`, name: newType}])
-        setNewType("")
-        setError("")
-    }
+    
 
     const handleDeleteType = (id) => {
         setTypes(types.filter((type) => type.id !== id))
     }
 
-    const handleSubmit = () => {
-        // In a real application, you would send the updated types to the server
-        onSave(types)
+    const handleSubmit = async () => {
+        try {
+            if (!newType.trim()) {
+                setError("Le nom du type est requis")
+                return
+            }
+
+            // Check if type already exists
+            if (types.some((type) => type.name.toLowerCase() === newType.toLowerCase())) {
+                setError("Ce type existe déjà")
+                return
+            }
+
+            setTypes([...types, {id: `temp-${Date.now()}`, name: newType}])
+            setNewType("")
+            setError("")
+            const response = await api.post('/api/document-type', {
+                    name: newType
+                }
+            )
+        } catch (err) {
+            console.log(err)
+            alert("Une erreur est survenue")
+        }
     }
 
     if (!isOpen) return null
@@ -84,24 +90,6 @@ export default function TypeModal({isOpen, onClose, onSave, documentTypes}) {
                                 } focus:outline-none focus:ring-2 focus:ring-purple-500/50 shadow-sm`}
                                 onKeyDown={(e) => e.key === "Enter" && handleAddType()}
                             />
-                            <button
-                                onClick={handleAddType}
-                                className="inline-flex items-center justify-center rounded-xl bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-200 shadow-md shadow-purple-200/50 hover:shadow-lg hover:shadow-purple-300/50 active:scale-95 h-11 w-11"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                </svg>
-                            </button>
                         </div>
 
                         {error && <p className="text-pink-500 text-xs mb-4">{error}</p>}

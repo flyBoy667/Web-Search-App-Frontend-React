@@ -103,25 +103,6 @@ export default function HomePage() {
         }
     }
 
-    const handleTypeSave = async (typeData) => {
-        try {
-            // Replace with your actual save type API endpoint
-            await fetch("/api/document-types", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(typeData),
-            })
-
-            // Refresh document types after save
-            fetchDocumentTypes()
-            setIsTypeModalOpen(false)
-        } catch (error) {
-            console.error("Error saving document type:", error)
-        }
-    }
-
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -312,7 +293,6 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Results Table */}
                 <div className="animate-slide-up">
                     <DocumentTable
                         documents={searchResults}
@@ -323,7 +303,6 @@ export default function HomePage() {
                 </div>
             </div>
 
-            {/* Modals */}
             <DocumentModal
                 isOpen={isDocumentModalOpen}
                 onClose={() => setIsDocumentModalOpen(false)}
@@ -335,7 +314,6 @@ export default function HomePage() {
             <TypeModal
                 isOpen={isTypeModalOpen}
                 onClose={() => setIsTypeModalOpen(false)}
-                onSave={handleTypeSave}
                 documentTypes={documentTypes}
             />
         </div>

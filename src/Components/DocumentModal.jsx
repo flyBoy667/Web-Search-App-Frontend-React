@@ -21,7 +21,6 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                 ...document,
             })
         } else {
-            // Reset form for new document
             setFormData({
                 doc_id: "",
                 doc_name: "",
@@ -57,7 +56,6 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
         if (selectedFile) {
             setFile(selectedFile)
 
-            // Extract file format
             const format = selectedFile.name.split(".").pop().toLowerCase()
             if (format === "pdf" || format === "docx" || format === "doc") {
                 setFormData((prev) => ({
