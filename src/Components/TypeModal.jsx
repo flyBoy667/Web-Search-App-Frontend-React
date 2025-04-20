@@ -11,7 +11,7 @@ export default function TypeModal({isOpen, onClose, documentTypes}) {
             setTypes([...documentTypes])
         }
     }, [documentTypes, isOpen])
-    
+
 
     const handleDeleteType = (id) => {
         setTypes(types.filter((type) => type.id !== id))
@@ -24,7 +24,6 @@ export default function TypeModal({isOpen, onClose, documentTypes}) {
                 return
             }
 
-            // Check if type already exists
             if (types.some((type) => type.name.toLowerCase() === newType.toLowerCase())) {
                 setError("Ce type existe déjà")
                 return
@@ -33,7 +32,7 @@ export default function TypeModal({isOpen, onClose, documentTypes}) {
             setTypes([...types, {id: `temp-${Date.now()}`, name: newType}])
             setNewType("")
             setError("")
-            const response = await api.post('/api/document-type', {
+            await api.post('/api/document-type', {
                     name: newType
                 }
             )

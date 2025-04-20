@@ -84,14 +84,7 @@ export default function HomePage() {
 
     const handleDocumentSave = async (documentData) => {
         try {
-            const method = documentData.doc_id ? "PUT" : "POST"
-            const url = documentData.doc_id ? `/api/documents/${documentData.doc_id}` : "/api/documents"
-
-            await fetch(url, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            await api.post('/api/document', {
                 body: JSON.stringify(documentData),
             })
 
@@ -100,6 +93,7 @@ export default function HomePage() {
             setIsDocumentModalOpen(false)
         } catch (error) {
             console.error("Error saving document:", error)
+            alert("error lors de l'ajout")
         }
     }
 

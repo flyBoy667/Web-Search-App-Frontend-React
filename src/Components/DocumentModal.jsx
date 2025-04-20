@@ -28,8 +28,7 @@ export function DocumentModal({isOpen, onClose, onSave, document, documentTypes}
                 doc_content: "",
                 doc_format: "pdf",
                 doc_file_full_path: "",
-                doc_insert_date: new Date().toISOString(),
-                doc_updated_date: new Date().toISOString(),
+
             })
         }
         setFile(null)
