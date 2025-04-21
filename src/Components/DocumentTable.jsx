@@ -1,6 +1,6 @@
 import {useState} from "react"
+import {EditDocumentModal} from "./EditDocumentModal.jsx";
 
-// Helper function to highlight search terms in text
 const highlightText = (text, searchTerm) => {
     if (!searchTerm || !text) return text
 
@@ -17,7 +17,6 @@ const highlightText = (text, searchTerm) => {
     )
 }
 
-// Helper function to extract context around search term
 const extractContext = (content, searchTerm, contextLength = 150) => {
     if (!searchTerm || !content) return content.substring(0, contextLength) + "..."
 
@@ -38,7 +37,6 @@ const extractContext = (content, searchTerm, contextLength = 150) => {
     return excerpt
 }
 
-// Format date helper
 const formatDate = (dateString) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat("fr-FR", {
@@ -50,8 +48,15 @@ const formatDate = (dateString) => {
     }).format(date)
 }
 
-export function DocumentTable({documents, searchTerm, onEdit, onDelete}) {
+export function DocumentTable({documents, searchTerm, onEdit, onDelete, documentTypes}) {
     const [tooltipVisible, setTooltipVisible] = useState({id: null, action: null})
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [editingDocument, setEditingDocument] = useState(null)
+
+    const handleEditClick = (doc) => {
+        setEditingDocument(doc);
+        setShowEditModal(true);
+    };
 
     if (!documents || documents.length === 0) {
         return (
@@ -181,7 +186,7 @@ export function DocumentTable({documents, searchTerm, onEdit, onDelete}) {
 
                                     <div className="relative">
                                         <button
-                                            onClick={() => onEdit(doc)}
+                                            onClick={() => handleEditClick(doc)}
                                             className="inline-flex h-9 w-9 items-center justify-center rounded-full text-amber-500 hover:bg-amber-50 hover:text-amber-600 focus:outline-none transition-colors"
                                             onMouseEnter={() => setTooltipVisible({id: doc.doc_id, action: "edit"})}
                                             onMouseLeave={() => setTooltipVisible({id: null, action: null})}
@@ -246,6 +251,17 @@ export function DocumentTable({documents, searchTerm, onEdit, onDelete}) {
                     </tbody>
                 </table>
             </div>
+
+            <EditDocumentModal
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                documentToEdit={editingDocument}
+                documentTypes={documentTypes}
+                onDocumentUpdated={(updatedDoc) => {
+                    onEdit(updatedDoc);
+                    setShowEditModal(false);
+                }}
+            />
         </div>
     )
 }

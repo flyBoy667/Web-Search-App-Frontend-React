@@ -17,17 +17,14 @@ export default function HomePage() {
     const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false)
 
     useEffect(() => {
-        // Fetch document types from your backend
         fetchDocumentTypes()
-        // Fetch initial documents
         fetchDocuments()
     }, [])
 
     const fetchDocumentTypes = async () => {
         try {
             const response = await api.get("/api/document-type")
-            const data = await response.data
-            setDocumentTypes(data)
+            setDocumentTypes(response.data)
         } catch (error) {
             console.error("Error fetching document types:", error)
         }
@@ -36,9 +33,8 @@ export default function HomePage() {
     const fetchDocuments = async () => {
         try {
             const response = await api.get("/api/document")
-            const data = await response.data
-            setDocuments(data)
-            setSearchResults(data)
+            setDocuments(response.data)
+            setSearchResults(response.data)
         } catch (error) {
             console.error("Error fetching documents:", error)
         }
@@ -51,9 +47,8 @@ export default function HomePage() {
             if (searchText) queryParams.append("query", searchText)
             if (selectedType) queryParams.append("type", selectedType)
 
-            const response = await fetch(`/api/search?${queryParams.toString()}`)
-            const data = await response.json()
-            setSearchResults(data)
+            const response = await api.get(`/api/search?${queryParams.toString()}`)
+            setSearchResults(response.data)
         } catch (error) {
             console.error("Error searching documents:", error)
         } finally {
@@ -68,20 +63,24 @@ export default function HomePage() {
 
     const handleEditDocument = (document) => {
         setEditingDocument(document)
-        setIsDocumentModalOpen(true)
+    }
+
+    const handleUpdateDocument = (updatedDoc) => {
+        setDocuments(docs => docs.map(doc => doc.doc_id === updatedDoc.doc_id ? updatedDoc : doc))
+        setSearchResults(docs => docs.map(doc => doc.doc_id === updatedDoc.doc_id ? updatedDoc : doc))
     }
 
     const handleDeleteDocument = async (docId) => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
             try {
                 await api.delete(`/api/document/${docId}`)
-                await fetchDocuments()
+                setDocuments(docs => docs.filter(doc => doc.doc_id !== docId))
+                setSearchResults(docs => docs.filter(doc => doc.doc_id !== docId))
             } catch (error) {
                 console.error("Error deleting document:", error)
             }
         }
     }
-
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
@@ -275,10 +274,12 @@ export default function HomePage() {
 
                 <div className="animate-slide-up">
                     <DocumentTable
+                        documentTypes={documentTypes}
                         documents={searchResults}
                         searchTerm={searchText}
                         onEdit={handleEditDocument}
                         onDelete={handleDeleteDocument}
+                        onDocumentUpdated={handleUpdateDocument}
                     />
                 </div>
             </div>
@@ -286,14 +287,16 @@ export default function HomePage() {
             <DocumentModal
                 isOpen={isDocumentModalOpen}
                 onClose={() => setIsDocumentModalOpen(false)}
-                doc={editingDocument}
                 documentTypes={documentTypes}
+                documentToEdit={editingDocument}
+                onDocumentUpdated={handleUpdateDocument}
             />
 
             <TypeModal
                 isOpen={isTypeModalOpen}
                 onClose={() => setIsTypeModalOpen(false)}
                 documentTypes={documentTypes}
+                onTypesUpdated={fetchDocumentTypes}
             />
         </div>
     )
