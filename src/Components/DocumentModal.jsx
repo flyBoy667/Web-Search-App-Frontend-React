@@ -11,9 +11,6 @@ const schema = z.object({
     doc_format: z.string()
         .min(2, {message: "Le format du document doit contenir au moins 2 caractères."})
         .max(30, {message: "Le format du document ne peut pas dépasser 30 caractères."}),
-    doc_content: z.string()
-        .min(2, {message: "Le contenu doit contenir au moins 2 caractères."})
-        .max(500, {message: "Le contenu ne peut pas dépasser 500 caractères."}),
     file: z.any().refine(file => file instanceof File, {message: "Un fichier est requis"}),
     doc_type: z.string().min(1, "Veuillez sélectionner un type de doc"),
 });
@@ -110,15 +107,6 @@ export function DocumentModal({isOpen, onClose, documentTypes}) {
                                     ))}
                                 </select>
                                 {errors.doc_type && <p className="text-pink-500 text-xs">{errors.doc_type.message}</p>}
-                            </div>
-
-                            {/* Contenu */}
-                            <div>
-                                <label className="text-sm font-medium text-purple-900">Contenu du document</label>
-                                <textarea {...register("doc_content")} rows={5}
-                                          className={`w-full px-3 py-2 rounded-xl border ${errors.doc_content ? "border-pink-500" : "border-purple-100"}`}></textarea>
-                                {errors.doc_content &&
-                                    <p className="text-pink-500 text-xs">{errors.doc_content.message}</p>}
                             </div>
 
                             {/* Format */}

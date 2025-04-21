@@ -75,7 +75,7 @@ export default function HomePage() {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
             try {
                 await api.delete(`/api/document/${docId}`)
-                fetchDocuments()
+                await fetchDocuments()
             } catch (error) {
                 console.error("Error deleting document:", error)
             }
