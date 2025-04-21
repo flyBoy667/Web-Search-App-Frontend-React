@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 import TypeModal from "../../Components/TypeModal.jsx";
-import {DocumentModal} from "../../Components/DocumentModal.jsx";
-import {DocumentTable} from "../../Components/DocumentTable.jsx";
-import {api} from "../../Services/api.js";
+import { DocumentModal } from "../../Components/DocumentModal.jsx";
+import { DocumentTable } from "../../Components/DocumentTable.jsx";
+import { api } from "../../Services/api.js";
 
 export default function HomePage() {
     const [searchText, setSearchText] = useState("")
@@ -45,7 +45,7 @@ export default function HomePage() {
         try {
             const queryParams = new URLSearchParams()
             if (searchText) queryParams.append("query", searchText)
-            if (selectedType) queryParams.append("type", selectedType)
+            // if (selectedType) queryParams.append("type", selectedType)
 
             const response = await api.get(`/api/search?${queryParams.toString()}`)
             setSearchResults(response.data)
@@ -105,7 +105,7 @@ export default function HomePage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             >
-                                <path d="M12 5v14M5 12h14"/>
+                                <path d="M12 5v14M5 12h14" />
                             </svg>
                             Nouveau document
                         </button>
@@ -128,8 +128,8 @@ export default function HomePage() {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.3-4.3"/>
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="m21 21-4.3-4.3" />
                                 </svg>
                             </div>
                             <input
@@ -148,11 +148,11 @@ export default function HomePage() {
                                     onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
                                     className="w-full flex items-center justify-between h-12 rounded-xl border border-purple-100 bg-white px-3 text-gray-900 hover:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 shadow-sm"
                                 >
-                  <span className="block truncate">
-                    {selectedType
-                        ? documentTypes.find((type) => type.id === selectedType)?.name || "Tous les types"
-                        : "Tous les types"}
-                  </span>
+                                    <span className="block truncate">
+                                        {selectedType
+                                            ? documentTypes.find((type) => type.id === selectedType)?.name || "Tous les types"
+                                            : "Tous les types"}
+                                    </span>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className={`h-4 w-4 text-purple-400 transition-transform ${isTypeDropdownOpen ? "rotate-180" : ""}`}
@@ -163,7 +163,7 @@ export default function HomePage() {
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                     >
-                                        <path d="m6 9 6 6 6-6"/>
+                                        <path d="m6 9 6 6 6-6" />
                                     </svg>
                                 </button>
                                 {isTypeDropdownOpen && (
@@ -197,11 +197,10 @@ export default function HomePage() {
                         <button
                             onClick={handleSearch}
                             disabled={loading}
-                            className={`h-12 px-6 rounded-xl font-medium text-white transition-all duration-200 shadow-md shadow-purple-200/50 ${
-                                loading
-                                    ? "bg-purple-400 cursor-not-allowed"
-                                    : "bg-purple-600 hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-300/50 active:scale-95"
-                            }`}
+                            className={`h-12 px-6 rounded-xl font-medium text-white transition-all duration-200 shadow-md shadow-purple-200/50 ${loading
+                                ? "bg-purple-400 cursor-not-allowed"
+                                : "bg-purple-600 hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-300/50 active:scale-95"
+                                }`}
                         >
                             {loading ? (
                                 <div className="flex items-center">
@@ -245,8 +244,8 @@ export default function HomePage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             >
-                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                                <polyline points="14 2 14 8 20 8"/>
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                                <polyline points="14 2 14 8 20 8" />
                             </svg>
                             <span
                                 className="text-sm text-purple-600">{searchResults.length} document(s) trouvé(s)</span>
@@ -265,7 +264,7 @@ export default function HomePage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             >
-                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                             </svg>
                             Gérer les types
                         </button>
